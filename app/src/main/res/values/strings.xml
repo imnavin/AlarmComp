@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">assistme</string>
+
+    <string-array name="alarms_array">
+        <item>apple</item>
+        <item>coolest</item>
+        <item>nokia</item>
+        <item>nokiatwo</item>
+        <item>sweetalarm</item>
+
+    </string-array>
+</resources>
