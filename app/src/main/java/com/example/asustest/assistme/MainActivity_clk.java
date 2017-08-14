@@ -24,7 +24,7 @@ import java.util.Calendar;
 
 public class MainActivity_clk extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
-
+    //Alarm >>>>>>>>>>>>>>>>>>>
     AlarmManager alarm_manager;
     TimePicker alarm_time_picker;
     TextView update_text;
