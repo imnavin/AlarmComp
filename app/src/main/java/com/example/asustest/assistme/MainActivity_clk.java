@@ -1,6 +1,7 @@
 package com.example.asustest.assistme;
 
 import android.app.AlarmManager;
+import android.os.AsyncTask;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Adapter;
@@ -21,6 +23,11 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 import java.util.Calendar;
 
+import weathercomp.data.JSONWeatherParser;
+import weathercomp.data.WeatherHttpClient;
+import weathercomp.model.BadWeather;
+import weathercomp.model.Weather;
+
 
 public class MainActivity_clk extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
@@ -31,6 +38,12 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
     Context context;
     PendingIntent pending_intent;
     int alarm_tracks;
+
+    //Weather >>>>>>>>>>>>>>>>>>>>>>>
+    private boolean weatherCondition;
+    private String myAppId = "dcb6553bfccc040683d9917eedd6cfbe";
+    Weather weather = new Weather();
+    BadWeather badWeather = new BadWeather();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +57,9 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
         final Calendar calendar = Calendar.getInstance(); //Create an instance of the calendar
         final Intent my_intent = new Intent(this.context, Alarm_Receiver.class);//Create an intent to the alarm receiver class
 
+        renderWeatherData("Spokane,US"); //ERROR
+        //Colombo,LK
+        //Spokane,US
 
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -121,7 +137,60 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
         });
 
 
+        //renderWeatherData("Spokane,US"); //ERROR
+        //Colombo,LK
+        //Spokane,US
+
+
     }
+
+    /*
+    *
+    * WEATHER *********************************
+    *
+    * */
+    public void renderWeatherData(String city){
+
+        WeatherTask weatherTask = new WeatherTask();
+        weatherTask.execute(new String[]{city+"&appid="+myAppId}); //FIX if needed
+        //weatherTask.execute(new String[]{city+"&appid=dcb6553bfccc040683d9917eedd6cfbe"});
+
+    }
+
+    private class WeatherTask extends AsyncTask<String, Void, Weather>{
+
+        @Override
+        protected Weather doInBackground(String... params) {
+            //data hold the whole StringBuffer that we returned from WeatherHttpClient class
+            String data = ((new WeatherHttpClient()).getWeatherData(params[0]));
+            weather = JSONWeatherParser.getWeather(data);
+
+            //Log.v("Data : ",weather.place.getCity());
+            //Log.v("Data : ",weather.currentCondition.getDescription());
+            String weatherSample = weather.currentCondition.getDescription();
+
+            if ((badWeather.isCloudy(weatherSample)) || (badWeather.isRaining(weatherSample))){
+                weatherCondition = true;
+            }
+            else{
+                weatherCondition = false;
+            }
+
+            Log.v("Good or Bad : ", String.valueOf(weatherCondition));
+
+            return weather;
+        }
+
+        @Override
+        protected void onPostExecute(Weather weather) {
+            super.onPostExecute(weather);
+        }
+    }
+    /*
+    *
+    * WEATHER **********************************
+    *
+    * */
 
     private void set_alarm_text(String output) {
 
