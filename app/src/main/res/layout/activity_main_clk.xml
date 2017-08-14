@@ -1,85 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.asustest.assistme.MainActivity_clk">
 
-    <TimePicker
-        android:id="@+id/timePicker"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        tools:layout_constraintTop_creator="1"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintBottom_creator="1"
-        app:layout_constraintBottom_toTopOf="@+id/alarm_off"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="7dp"
-        tools:layout_constraintLeft_creator="1"
-        android:layout_marginBottom="9dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/alarm_on"
-        android:layout_width="106dp"
-        android:layout_height="62dp"
-        android:onClick="turn_on"
-        android:text="Turn On Alarm"
-        android:textStyle="bold"
-        tools:layout_constraintBottom_creator="1"
-        app:layout_constraintBottom_toTopOf="@+id/update_alarm"
-        tools:layout_constraintLeft_creator="1"
-        android:layout_marginBottom="1dp"
-        app:layout_constraintLeft_toLeftOf="@+id/timePicker" />
-
-    <Button
-        android:id="@+id/alarm_off"
-        android:layout_width="106dp"
-        android:layout_height="62dp"
-        android:layout_marginBottom="69dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginRight="30dp"
-        android:onClick="turn_off"
-        android:text="Turn Off Alarm"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        tools:layout_constraintBottom_creator="1"
-        tools:layout_constraintRight_creator="1" />
-
-    <TextView
-        android:id="@+id/update_alarm"
-        android:layout_width="163dp"
-        android:layout_height="29dp"
-        android:text="Did you set your alarm?"
-        android:textStyle="bold"
-        tools:layout_constraintTop_creator="1"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintBottom_creator="1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="56dp"
-        tools:layout_constraintLeft_creator="1"
-        android:layout_marginBottom="46dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/alarm_off" />
-
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:layout_constraintTop_creator="1"
-        tools:layout_constraintRight_creator="1"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="4dp"
-        app:layout_constraintTop_toBottomOf="@+id/update_alarm"
-        tools:layout_constraintLeft_creator="1"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:orientation="vertical">
 
-</android.support.constraint.ConstraintLayout>
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="40dp" />
+
+        <TimePicker
+            android:id="@+id/timePicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/update_alarm"
+            android:layout_width="250dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:text="Set your alarm"
+            android:textAppearance="@android:style/TextAppearance.Material.Large" />
+
+        <EditText
+            android:id="@+id/txt_City"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:hint="Type City..."
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/txt_Country"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Type Country..."
+            android:inputType="textPersonName" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/alarm_on"
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:layout_weight="1"
+                android:onClick="turn_on"
+                android:text="Turn on" />
+
+            <Button
+                android:id="@+id/alarm_off"
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:layout_weight="1"
+                android:onClick="turn_off"
+                android:text="Turn off" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

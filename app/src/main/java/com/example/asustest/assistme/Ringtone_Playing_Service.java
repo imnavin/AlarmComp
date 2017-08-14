@@ -48,7 +48,7 @@ public class Ringtone_Playing_Service extends Service {
                     new Intent(this.getApplicationContext(), MainActivity_clk.class);//Set up an intent that goes to the main activity
 
             PendingIntent pending_intent_main_activity = PendingIntent.getActivity(this, 0, intent_main_activity, 0);
-            // stackBuilder=TaskStackBuilder.create()
+            //stackBuilder=TaskStackBuilder.create()
 
             //notification parameters
             Notification notification_popup = new Notification.Builder(this)
