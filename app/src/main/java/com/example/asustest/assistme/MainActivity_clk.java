@@ -16,6 +16,7 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -46,6 +47,8 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
     Date time1, time2;
     long delay = 900000;
     String timeNow;
+    EditText city,country;
+    String parsedata="";
 
     //Weather >>>>>>>>>>>>>>>>>>>>>>>
     private boolean weatherCondition;
@@ -65,7 +68,12 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
         final Calendar calendar = Calendar.getInstance(); //Create an instance of the calendar
         final Intent my_intent = new Intent(this.context, Alarm_Receiver.class);//Create an intent to the alarm receiver class
 
-        renderWeatherData("Colombo,LK"); //ERROR
+        country=(EditText)findViewById(R.id.txt_Country);
+        city=(EditText)findViewById(R.id.txt_City);
+
+
+        renderWeatherData("Colombo,LK");
+        //ERROR
         //Colombo,LK
         //Spokane,US
 
@@ -88,92 +96,28 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
             @Override
             public void onClick(View v) {
 
+                parsedata=city.getText()+","+country.getText();
+                renderWeatherData(parsedata);
 
-
-                /*String timeNow = ""+hour+":"+String.format("%02d",minute);
-
-                try {
-                    time1 = df.parse(timeNow);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                if(weatherCondition == true){
-                    time2.setTime((time1.getTime() - delay));
-                }
-
-                //IMPORTANT WHEN DISPLAYING TIME CALCULATIONS <<<
-                int totMin = (int)(time2.getTime()/60000);
-                int totHour = totMin/60;
-                int dec = totMin%60;
-                int toHour = 0;
-                int toMin = 0;
-                String diffTime;
-
-                if(dec == 0){
-                    toHour = totMin/60;
-                    //diffTime = ""+toHour+":"+String.format("%02d",toMin); //IMPORTANT WHEN DISPLAYING TIME CALCULATIONS <<<
-                    //currentTime.setText(diffTime);
-                    if(totHour > 12){
-                        int pmTime = hour - 12;
-                        //String timeNow = ""+pmTime+":"+min+"PM";
-                        timeNow = "Alarm is set to "+pmTime+":"+String.format("%02d",dec)+"PM";
-                        update_text.setText(timeNow);
-                        //currentTime.setText(timeNow);
-
-                    }
-                    else{
-                        //String timeNow = ""+hour+":"+min+"AM";
-                        timeNow = "Alarm is set to "+hour+":"+String.format("%02d",dec)+"AM";
-                        update_text.setText(timeNow);
-                        //currentTime.setText(timeNow);
-
-                    }
-                }
-                else{
-                    toHour = totMin/60;
-                    //diffTime = ""+toHour+":"+String.format("%02d",dec); //IMPORTANT WHEN DISPLAYING TIME CALCULATIONS <<<
-                    //currentTime.setText(diffTime);
-                    if(totHour > 12){
-                        int pmTime = hour - 12;
-                        //String timeNow = ""+pmTime+":"+min+"PM";
-                        timeNow = "Alarm is set to "+pmTime+":"+String.format("%02d",dec)+"PM";
-                        update_text.setText(timeNow);
-                        //currentTime.setText(timeNow);
-
-                    }
-                    else{
-                        //String timeNow = ""+hour+":"+min+"AM";
-                        timeNow = "Alarm is set to "+hour+":"+String.format("%02d",dec)+"AM";
-                        update_text.setText(timeNow);
-                        //currentTime.setText(timeNow);
-
-                    }
-                }*/
-
-                //String milSec = ""+diff;
-                //currentTime.setText(milSec);
-
-
-                /*//To display the time as AM/PM format instead of digital time
-                if(hour > 12){
-                    int pmTime = hour - 12;
-                    //String timeNow = ""+pmTime+":"+min+"PM";
-                    String timeNow = ""+pmTime+":"+String.format("%02d",minute)+"PM";
-                    //currentTime.setText(timeNow);
-
-                }
-                else{
-                    //String timeNow = ""+hour+":"+min+"AM";
-                    String timeNow = ""+hour+":"+String.format("%02d",minute)+"AM";
-                    //currentTime.setText(timeNow);
-
-                }*/
-
-                calendar.set(Calendar.HOUR_OF_DAY, alarm_time_picker.getHour());//set calendar instance with hours and minutes on the time picker
-                calendar.set(Calendar.MINUTE, alarm_time_picker.getMinute());
 
                 int hour = alarm_time_picker.getHour();
                 int minute = alarm_time_picker.getMinute();
+
+                //weatherCondition=false;
+                if(weatherCondition){
+                    minute=minute-15;
+                    if(minute<0){
+                        minute=60-minute;
+                    }
+
+                }
+
+
+
+                calendar.set(Calendar.HOUR_OF_DAY,hour );//set calendar instance with hours and minutes on the time picker
+                calendar.set(Calendar.MINUTE, minute);
+
+
 
                 String hour_string = String.valueOf(hour);
                 String minute_string = String.valueOf(minute);
@@ -259,12 +203,14 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
 
             if ((badWeather.isCloudy(weatherSample)) || (badWeather.isRaining(weatherSample))){
                 weatherCondition = true;
+                Log.v("Good or Bad : true ", String.valueOf(weatherCondition));
             }
             else{
                 weatherCondition = false;
+                Log.v("Good or Bad : false ", String.valueOf(weatherCondition));
             }
 
-            Log.v("Good or Bad : ", String.valueOf(weatherCondition));
+            Log.v("Good or Bad : ", weather.currentCondition.getDescription());
 
             return weather;
         }
