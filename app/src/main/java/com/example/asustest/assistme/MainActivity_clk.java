@@ -72,6 +72,7 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
         city=(EditText)findViewById(R.id.txt_City);
 
 
+        //WEATHER >>>>>>>>>>>>>>>>>>>>>
         renderWeatherData("Colombo,LK");
         //ERROR
         //Colombo,LK
@@ -107,7 +108,8 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
                 if(weatherCondition){
                     minute=minute-15;
                     if(minute<0){
-                        minute=60-minute;
+                        minute=60+minute;
+                        hour=hour-1;
                     }
 
                 }
@@ -133,11 +135,11 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
 
                 }
 
-                set_alarm_text("Alarm Set to " +"0"+hour_string+":" +minute_string);//changes the text in the update text box
+                set_alarm_text("Alarm Set to " +hour_string+":" +minute_string);//changes the text in the update text box
 
                 my_intent.putExtra("extra", "alarm on");//tells the clock that the alarm on button is pressed, putting extra string to my_intent
 
-                my_intent.putExtra("alarm tone", alarm_tracks);//tell the app that you wanta certain value from the spinner
+                my_intent.putExtra("alarm tone", alarm_tracks);//tell the app that you want a certain value from the spinner
 
                 Log.e("The alarm id is", String.valueOf(alarm_tracks));
 
