@@ -23,6 +23,13 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Calendar;
@@ -56,6 +63,9 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
     Weather weather = new Weather();
     BadWeather badWeather = new BadWeather();
 
+    //Maps >>>>>>>>>>>>>>>>>>>>>>>>>>
+    int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +80,23 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
 
         country=(EditText)findViewById(R.id.txt_Country);
         city=(EditText)findViewById(R.id.txt_City);
+
+        // AUTOCOMPLETE FRAGMENT
+        try {
+            AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                    .setCountry("LK")
+                    .build();
+
+            Intent intent =
+                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+                            .setFilter(typeFilter)
+                            .build(this);
+            startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+        } catch (GooglePlayServicesRepairableException e) {
+            // TODO: Handle the error.
+        } catch (GooglePlayServicesNotAvailableException e) {
+            // TODO: Handle the error.
+        }
 
 
         //WEATHER >>>>>>>>>>>>>>>>>>>>>
@@ -138,7 +165,6 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
                 set_alarm_text("Alarm Set to " +hour_string+":" +minute_string);//changes the text in the update text box
 
                 my_intent.putExtra("extra", "alarm on");//tells the clock that the alarm on button is pressed, putting extra string to my_intent
-
                 my_intent.putExtra("alarm tone", alarm_tracks);//tell the app that you want a certain value from the spinner
 
                 Log.e("The alarm id is", String.valueOf(alarm_tracks));
@@ -179,10 +205,31 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
     }
 
     /*
-    *
-    * WEATHER *********************************
-    *
-    * */
+    FRAGMENT
+     */
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(this, data);
+                Log.i("Destination", "Place: " + place.getName());
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(this, data);
+                // TODO: Handle the error.
+                Log.i("Destination", status.getStatusMessage());
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+    }
+
+    /*
+        *
+        * WEATHER *********************************
+        *
+        * */
     public void renderWeatherData(String city){
 
         WeatherTask weatherTask = new WeatherTask();
