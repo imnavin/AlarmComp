@@ -47,7 +47,6 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
 
     //Alarm >>>>>>>>>>>>>>>>>>>
     AlarmManager alarm_manager;
-    TimePicker alarm_time_picker;
     TextView update_text;
     Context context;
     PendingIntent pending_intent;
@@ -56,10 +55,12 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
     Date time1, time2;
     long delay = 900000;
     String timeNow;
-    EditText city,country;
+    String destAddress;
     String parsedata="";
+    String am_pm = "AM";
 
-    int t_hours, t_mins;
+    int hour = 0;
+    int minute = 0;
 
     //Weather >>>>>>>>>>>>>>>>>>>>>>>
     private boolean weatherCondition;
@@ -68,8 +69,9 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
     BadWeather badWeather = new BadWeather();
 
     //Maps >>>>>>>>>>>>>>>>>>>>>>>>>>
-    int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
-    LatLng dest, current;
+    private int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
+    private LatLng dest, current;
+    private int distance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +80,7 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
         this.context = this;
 
         alarm_manager = (AlarmManager)getSystemService(ALARM_SERVICE);
-        //alarm_time_picker = (TimePicker)findViewById(R.id.timePicker);
-        //update_text = (TextView)findViewById(R.id.update_alarm);
+        update_text = (TextView)findViewById(R.id.update_alarm);
         final Calendar calendar = Calendar.getInstance(); //Create an instance of the calendar
         final Intent my_intent = new Intent(this.context, Alarm_Receiver.class);//Create an intent to the alarm receiver class
 
@@ -112,56 +113,72 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
             @Override
             public void onClick(View v) {
 
-                parsedata=city.getText()+","+country.getText();
-                renderWeatherData(parsedata);
+                if (!(hour == 0 && minute == 0 && dest == null)) {
 
+                    parsedata = extractCity(destAddress) + ",LK";
+                    renderWeatherData(parsedata);
 
-                int hour = alarm_time_picker.getHour();
-                int minute = alarm_time_picker.getMinute();
+//                int hour = alarm_time_picker.getHour();
+//                int minute = alarm_time_picker.getMinute();
 
-                //weatherCondition=false;
-                if(weatherCondition){
-                    minute=minute-15;
-                    if(minute<0){
-                        minute=60+minute;
-                        hour=hour-1;
+                    //ADD TIME
+                    hour = MyTimePicker.hoursTP;
+                    minute = MyTimePicker.minsTP;
+
+                    Log.i("Hours PASS : ", Integer.toString(hour));
+                    Log.i("Mins PASS : ", Integer.toString(minute));
+
+                    //weatherCondition=false;
+                    if (weatherCondition) {
+                        Log.i("Weather data PASS : ",Boolean.toString(weatherCondition));
+                        minute = minute - 15;
+                        if (minute < 0) {
+                            minute = 60 + minute;
+                            hour = hour - 1;
+                        }
                     }
 
+
+                    calendar.set(Calendar.HOUR_OF_DAY, hour);//set calendar instance with hours and minutes on the time picker
+                    calendar.set(Calendar.MINUTE, minute);
+
+
+                    String hour_string = String.valueOf(hour);
+                    String minute_string = String.valueOf(minute);
+
+                    if (hour > 12) {
+
+                        hour_string = String.valueOf(hour - 12);
+                        am_pm = "PM";
+                    }
+
+                    if (minute < 10) {
+
+                        minute_string = "0" + String.valueOf(minute);
+
+                    }
+
+                    set_alarm_text(hour_string + ":" + minute_string + am_pm);//changes the text in the update text box
+
+                    my_intent.putExtra("extra", "alarm on");//tells the clock that the alarm on button is pressed, putting extra string to my_intent
+                    my_intent.putExtra("alarm tone", alarm_tracks);//tell the app that you want a certain value from the spinner
+
+                    Log.e("The alarm id is", String.valueOf(alarm_tracks));
+
+                    pending_intent = PendingIntent.getBroadcast(MainActivity_clk.this, 0,
+                            my_intent, PendingIntent.FLAG_UPDATE_CURRENT);//Create a pending intent
+
+                    alarm_manager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending_intent);
+
                 }
 
-
-
-                calendar.set(Calendar.HOUR_OF_DAY,hour );//set calendar instance with hours and minutes on the time picker
-                calendar.set(Calendar.MINUTE, minute);
-
-
-
-                String hour_string = String.valueOf(hour);
-                String minute_string = String.valueOf(minute);
-
-                if (hour > 12){
-
-                    hour_string = String.valueOf(hour - 12);
+                else{
+                    //Alert the user to enter the time or the Destination
+                    Log.e("FAIL","Alarm set FAIL");
+                    Log.i("FAILED",Integer.toString(hour));
+                    Log.i("FAILED",Integer.toString(minute));
+                    Log.i("FAILED",dest.toString());
                 }
-
-                if (minute < 10){
-
-                    minute_string = "0" +String.valueOf(minute);
-
-                }
-
-                set_alarm_text("Alarm Set to " +hour_string+":" +minute_string);//changes the text in the update text box
-
-                my_intent.putExtra("extra", "alarm on");//tells the clock that the alarm on button is pressed, putting extra string to my_intent
-                my_intent.putExtra("alarm tone", alarm_tracks);//tell the app that you want a certain value from the spinner
-
-                Log.e("The alarm id is", String.valueOf(alarm_tracks));
-
-                pending_intent = PendingIntent.getBroadcast(MainActivity_clk.this, 0,
-                                my_intent, PendingIntent.FLAG_UPDATE_CURRENT);//Create a pending intent
-
-                alarm_manager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending_intent );
-
             }
         });
 
@@ -193,6 +210,19 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
 
     }
 
+    public String extractCity(String fullAddress){
+        if(!(fullAddress == null)){
+            String[] parts = fullAddress.split(", ");
+            String extracted = parts[1];
+            Log.i("Extracted City:", extracted);
+            return extracted;
+        }
+        else{
+            Log.i("ERROR: ", "Can't extract city cos the String provided is NULL");
+            return null;
+        }
+    }
+
     /*
     FRAGMENT
      */
@@ -203,7 +233,12 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(this, data);
                 dest = place.getLatLng();
+                destAddress = place.getAddress().toString();
                 Log.i("Destination", "Place: " + place.getName());
+                Log.i("City", extractCity(place.getAddress().toString()));
+                Log.i("Address", place.getAddress().toString());
+                Log.i("LatLng",dest.toString());
+
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
                 // TODO: Handle the error.
@@ -257,12 +292,8 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
             {
                 DialogFragment newFragment = new MyTimePicker();
                 newFragment.show(getSupportFragmentManager(), "timePicker");
-
-                MyTimePicker myTimePicker = new MyTimePicker();
-
-                t_hours = myTimePicker.getHours();
-                t_mins = myTimePicker.getMins();
             }
+            break;
         }
 
     }

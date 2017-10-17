@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
@@ -16,8 +17,8 @@ import java.util.Calendar;
 
 public class MyTimePicker extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
 
-    int hours;
-    int mins;
+    public static int hoursTP = 0;
+    public static int minsTP = 0;
 
     @NonNull
     @Override
@@ -35,15 +36,10 @@ public class MyTimePicker extends DialogFragment implements TimePickerDialog.OnT
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
-        hours = hourOfDay;
-        mins = minute;
-    }
+        hoursTP = hourOfDay;
+        minsTP = minute;
 
-    public int getHours(){
-        return hours;
-    }
-
-    public int getMins(){
-        return mins;
+        Log.i("Hours SET",Integer.toString(hoursTP));
+        Log.i("Minutes SET",Integer.toString(minsTP));
     }
 }
