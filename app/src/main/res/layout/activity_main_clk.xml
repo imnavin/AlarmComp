@@ -11,71 +11,101 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/alarm_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Alarm Title"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/alarm_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="0:00 AM"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/alarm_how"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="+30 mins Traffic"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
         <Spinner
             android:id="@+id/spinner"
             android:layout_width="match_parent"
-            android:layout_height="40dp" />
+            android:layout_height="60dp" />
 
-        <TimePicker
-            android:id="@+id/timePicker"
+        <Space
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="10dp" />
+
+        <Button
+            android:id="@+id/btn_location"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:onClick="onClick"
+            android:text="Location" />
+
+        <Button
+            android:id="@+id/btn_transport"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:onClick="onClick"
+            android:text="Transportation" />
+
+        <Button
+            android:id="@+id/btn_time"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:onClick="onClick"
+            android:text="Time" />
+
+        <Button
+            android:id="@+id/alarm_on"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:onClick="turn_on"
+            android:text="Set alarm" />
+
+        <Button
+            android:id="@+id/alarm_off"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:onClick="turn_off"
+            android:text="Turn off" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
 
         <TextView
-            android:id="@+id/update_alarm"
-            android:layout_width="250dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:text="Set your alarm"
-            android:textAppearance="@android:style/TextAppearance.Material.Large" />
-
-        <EditText
-            android:id="@+id/txt_City"
+            android:id="@+id/textView9"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:ems="10"
-            android:hint="Type City..."
-            android:inputType="textPersonName" />
+            android:text="Items"
+            android:textAppearance="@style/TextAppearance.AppCompat.Button" />
 
-        <EditText
-            android:id="@+id/txt_Country"
+        <CheckBox
+            android:id="@+id/checkBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Type Country..."
-            android:inputType="textPersonName" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="10dp"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/alarm_on"
-                android:layout_width="wrap_content"
-                android:layout_height="70dp"
-                android:layout_weight="1"
-                android:onClick="turn_on"
-                android:text="Turn on" />
-
-            <Button
-                android:id="@+id/alarm_off"
-                android:layout_width="wrap_content"
-                android:layout_height="70dp"
-                android:layout_weight="1"
-                android:onClick="turn_off"
-                android:text="Turn off" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:layout_marginTop="20dp"/>
+            android:text="CheckBox" />
 
     </LinearLayout>
 

@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +30,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -57,6 +59,8 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
     EditText city,country;
     String parsedata="";
 
+    int t_hours, t_mins;
+
     //Weather >>>>>>>>>>>>>>>>>>>>>>>
     private boolean weatherCondition;
     private String myAppId = "dcb6553bfccc040683d9917eedd6cfbe";
@@ -65,6 +69,7 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
 
     //Maps >>>>>>>>>>>>>>>>>>>>>>>>>>
     int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
+    LatLng dest, current;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,31 +78,13 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
         this.context = this;
 
         alarm_manager = (AlarmManager)getSystemService(ALARM_SERVICE);
-        alarm_time_picker = (TimePicker)findViewById(R.id.timePicker);
-        update_text = (TextView)findViewById(R.id.update_alarm);
+        //alarm_time_picker = (TimePicker)findViewById(R.id.timePicker);
+        //update_text = (TextView)findViewById(R.id.update_alarm);
         final Calendar calendar = Calendar.getInstance(); //Create an instance of the calendar
         final Intent my_intent = new Intent(this.context, Alarm_Receiver.class);//Create an intent to the alarm receiver class
 
-        country=(EditText)findViewById(R.id.txt_Country);
-        city=(EditText)findViewById(R.id.txt_City);
-
-        // AUTOCOMPLETE FRAGMENT
-        try {
-            AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
-                    .setCountry("LK")
-                    .build();
-
-            Intent intent =
-                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
-                            .setFilter(typeFilter)
-                            .build(this);
-            startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
-        } catch (GooglePlayServicesRepairableException e) {
-            // TODO: Handle the error.
-        } catch (GooglePlayServicesNotAvailableException e) {
-            // TODO: Handle the error.
-        }
-
+        //country=(EditText)findViewById(R.id.txt_Country);
+        //city=(EditText)findViewById(R.id.txt_City);
 
         //WEATHER >>>>>>>>>>>>>>>>>>>>>
         renderWeatherData("Colombo,LK");
@@ -117,6 +104,7 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
         spinner.setOnItemSelectedListener(this);
 
 
+        //turn_on
         Button alarm_on = (Button)findViewById(R.id.alarm_on);
 
         //Create an onclick listener to start the alarm
@@ -178,6 +166,7 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
         });
 
 
+        //turn_off
         Button alarm_off = (Button)findViewById(R.id.alarm_off);
         alarm_off.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,6 +202,7 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
         if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(this, data);
+                dest = place.getLatLng();
                 Log.i("Destination", "Place: " + place.getName());
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
@@ -235,6 +225,45 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
         WeatherTask weatherTask = new WeatherTask();
         weatherTask.execute(new String[]{city+"&appid="+myAppId}); //FIX if needed
         //weatherTask.execute(new String[]{city+"&appid=dcb6553bfccc040683d9917eedd6cfbe"});
+
+    }
+
+    public void onClick(View view) {
+
+        switch (view.getId()){
+
+            case R.id.btn_location:
+            {
+                // AUTOCOMPLETE FRAGMENT
+                try {
+                    AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                            .setCountry("LK")
+                            .build();
+
+                    Intent intent =
+                            new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+                                    .setFilter(typeFilter)
+                                    .build(this);
+                    startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+                } catch (GooglePlayServicesRepairableException e) {
+                    // TODO: Handle the error.
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    // TODO: Handle the error.
+                }
+            }
+            break;
+
+            case R.id.btn_time:
+            {
+                DialogFragment newFragment = new MyTimePicker();
+                newFragment.show(getSupportFragmentManager(), "timePicker");
+
+                MyTimePicker myTimePicker = new MyTimePicker();
+
+                t_hours = myTimePicker.getHours();
+                t_mins = myTimePicker.getMins();
+            }
+        }
 
     }
 
