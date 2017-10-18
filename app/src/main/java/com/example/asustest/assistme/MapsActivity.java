@@ -32,7 +32,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import mapscomp.GetDirectionsData;
 import mapscomp.GetNearbyPlacesData;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
@@ -48,7 +47,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location lastLocation;
     private Marker currentLocationMarker;
     //int PROXIMITY_RADIUS = 2000;
-    double latitude, longitude;
+    public static double latitude, longitude;
     double end_latitude, end_longitude;
     PlaceAutocompleteFragment autocompleteFragment;
     LatLng destLatLng, trainLatLng;
@@ -295,12 +294,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case R.id.B_to:
                 dataTransfer = new Object[3];
                 url = getDirectionsUrl(latitude, longitude, end_latitude, end_longitude);
-                GetDirectionsData getDirectionsData = new GetDirectionsData();
+                //GetDirectionsData getDirectionsData = new GetDirectionsData();
                 dataTransfer[0] = mMap;
                 dataTransfer[1] = url;
                 dataTransfer[2] = new LatLng(end_latitude,end_longitude);
 
-                getDirectionsData.execute(dataTransfer);
+                //getDirectionsData.execute(dataTransfer);
 
                 /*//distance between two places
                 mMap.clear();

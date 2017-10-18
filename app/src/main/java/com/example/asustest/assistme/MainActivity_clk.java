@@ -10,19 +10,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -30,13 +25,14 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
+import mapscomp.GetNearbyPlacesData;
 import weathercomp.data.JSONWeatherParser;
 import weathercomp.data.WeatherHttpClient;
 import weathercomp.model.BadWeather;
@@ -72,6 +68,10 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
     private int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     private LatLng dest, current;
     private int distance;
+    double myLat, myLng;
+    double destLat, destLng;
+    int durationHours=0, durationMins=0;
+    GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +115,40 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
 
                 if (!(hour == 0 && minute == 0 && dest == null)) {
 
+                    OtherMethods otherMethods = new OtherMethods();
+
+                    myLat = MapsActivity.latitude;
+                    myLng = MapsActivity.longitude;
+
+                    destLat = dest.latitude;
+                    destLng = dest.longitude;
+
+                    int lateWeather = distanceFromAtoB(myLat, myLng, destLat, destLng);
+                    //String duration = otherMethods.extractDuration(GetDirectionsData.duration);
+                    String duration="25";
+                    String[] parts = duration.split(" ");
+
+                    if (parts.length == 1)
+                    {
+                        String timeMinutes = parts[0];
+                        durationMins = Integer.parseInt(timeMinutes);
+                    }
+                    else if (parts.length == 2)
+                    {
+                        String timeHours = parts[0];
+                        String timeMinutes = parts[1];
+
+                        durationHours = Integer.parseInt(timeHours);
+                        durationMins = Integer.parseInt(timeMinutes);
+                    }
+                    else {
+                        Log.e("ERROR Duration ", "WRONG array");
+                    }
+
+
+
+                    lateWeather = lateWeather * 5;
+
                     parsedata = extractCity(destAddress) + ",LK";
                     renderWeatherData(parsedata);
 
@@ -125,13 +159,16 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
                     hour = MyTimePicker.hoursTP;
                     minute = MyTimePicker.minsTP;
 
+                    hour = hour - durationHours;
+                    minute = minute - durationMins;
+
                     Log.i("Hours PASS : ", Integer.toString(hour));
                     Log.i("Mins PASS : ", Integer.toString(minute));
 
                     //weatherCondition=false;
                     if (weatherCondition) {
                         Log.i("Weather data PASS : ",Boolean.toString(weatherCondition));
-                        minute = minute - 15;
+                        minute = minute - lateWeather;
                         if (minute < 0) {
                             minute = 60 + minute;
                             hour = hour - 1;
@@ -210,6 +247,7 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
 
     }
 
+    //NEEDS REWORK
     public String extractCity(String fullAddress){
         if(!(fullAddress == null)){
             String[] parts = fullAddress.split(", ");
@@ -221,6 +259,48 @@ public class MainActivity_clk extends AppCompatActivity implements AdapterView.O
             Log.i("ERROR: ", "Can't extract city cos the String provided is NULL");
             return null;
         }
+    }
+
+    public LatLng findNearestStation(double lat, double lng){
+
+        LatLng nearestTrainLatLng;
+
+        OtherMethods otherMethods = new OtherMethods();
+        String keyType = "train_station";
+        String trainUrl = otherMethods.getNearbyTrainUrl(lat, lng, keyType);
+
+        Log.d("TRAIN URL", " "+trainUrl);
+
+        Object dataTransfer[] = new Object[2];
+        dataTransfer[0] = mMap;
+        dataTransfer[1] = trainUrl;
+
+        GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
+        getNearbyPlacesData.execute(dataTransfer);
+        nearestTrainLatLng = getNearbyPlacesData.getLatLng();
+
+        Log.d("Train LAT LNG",nearestTrainLatLng.toString());
+
+        return nearestTrainLatLng;
+    }
+
+    public int distanceFromAtoB(double A_lat, double A_lng, double B_lat, double B_lng){
+
+        OtherMethods otherMethods = new OtherMethods();
+        Object dataTransfer[] = new Object[3];
+        String distanceUrl = otherMethods.getDirectionUrl(A_lat, A_lng, B_lat, B_lng);
+        //GetDirectionsData getDirectionsData = new GetDirectionsData();
+
+        dataTransfer[0] = mMap;
+        dataTransfer[1] = distanceUrl;
+        dataTransfer[2] = new LatLng(B_lat,B_lng);
+
+       // getDirectionsData.execute(dataTransfer); // EXTRACT
+
+       // distance = otherMethods.extractDistance(GetDirectionsData.distance);
+
+        return distance;
+
     }
 
     /*
